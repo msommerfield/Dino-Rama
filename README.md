@@ -11,7 +11,7 @@ Dino-Rama is a Django and React app that is information about Dinosaurs
 ## Project links
 [Trello Board](https://trello.com/b/WGq8ed7r/dinostyles)
 
-[Heroku](https://wafflemania.herokuapp.com/)
+[Heroku](https://dino-rama.herokuapp.com/)
 
 ## Update Heroku!!!!!!!!!!!!!!!!!!!!!
 
