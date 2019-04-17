@@ -22,7 +22,7 @@ class Dinosaur(models.Model):
     image = models.CharField(max_length=400, default="dino pic")
     fossil = models.CharField(max_length=400, default="fossil pic")
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='dinosaurs', default="Laramidia which is now western North America")
-    diet = models.ForeignKey(Diet, on_delete=models.CASCADE, related_name='dinosaurs', default='omnivore')
+    diet = models.ForeignKey(Diet, on_delete=models.CASCADE, related_name='dinosaurs')
 
     def __str__(self):
         return self.name
