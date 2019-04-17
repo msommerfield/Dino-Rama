@@ -17,8 +17,8 @@ class Location(models.Model):
 
 class Dinosaur(models.Model):
     name = models.CharField(max_length=255)
-    estimated_height = models.IntegerRange()
-    estimated_mass = models.IntegerRange()
+    estimated_height = models.CharField(max_length=255)
+    estimated_mass = models.CharField(max_length=255)
     image = models.CharField(max_length=400)
     fossil = models.CharField(max_length=400)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='dinosaurs')
