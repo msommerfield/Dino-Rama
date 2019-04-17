@@ -2,25 +2,27 @@ from django.db import models
 
 # Create your models here.
 
-class Stats(models.Model):
-    estimated_height = models.IntegerField()
-    estimated_mass = models.IntegerField()
+class Diet(models.Model):
     diet = models.CharField(max_length=255)
+
     def __str__(self):
-        return self.estimated_height
+        return self.diet
 
 class Location(models.Model):
     time_period = models.CharField(max_length=255)
     region = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.title
+        return self.time_period
 
 class Dinosaur(models.Model):
     name = models.CharField(max_length=255)
+    estimated_height = models.IntegerRange()
+    estimated_mass = models.IntegerRange()
     image = models.CharField(max_length=400)
+    fossil = models.CharField(max_length=400)
     location = models.ForeignKey(Location, on_delete=models.CASCADE, related_name='dinosaurs')
-    stats = models.ForeignKey(Stats, on_delete=models.CASCADE, related_name='dinosaurs')
+    diet = models.ForeignKey(Diet, on_delete=models.CASCADE, related_name='dinosaurs')
 
     def __str__(self):
         return self.name
