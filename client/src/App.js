@@ -1,7 +1,9 @@
-import React, {Component} from "react";
-import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import React, { Component } from "react";
+import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
 import DinosaurList from './components/DinosaurList';
 import Dinosaur from './components/Dinosaur';
+import NavigationBar from './components/NavigationBar';
+import HomePage from './components/HomePage';
 import "./App.css";
 import styled from 'styled-components';
 
@@ -17,17 +19,17 @@ class App extends Component {
         return (
             <Router>
                 <div className="App">
-
-                    <div>
-                        <h1>Dino-rama</h1>
-                        <div>
+                        {/* <div>
                             <div><StyledLink to="/">All Dinos</StyledLink></div>
-                        </div>
+                        </div> */}
+                   
+                    <div>
+                        <NavigationBar/>
                     </div>
-
                     <Switch>
-                      <Route exact path="/" component={DinosaurList}/>
-                      <Route path="/dinosaurs/:id" component={Dinosaur}/>
+                        <Route exact path="/" component={HomePage}/>
+                        <Route exact path="/dinosaur" component={Dinosaur}/>
+                        <Route path="/dinosaur/:dinosaurId" component={DinosaurList}/>
                     </Switch>
                 </div>
             </Router>
