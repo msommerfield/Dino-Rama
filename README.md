@@ -13,7 +13,6 @@ Dino-Rama is a Django and React app that is information about Dinosaurs
 
 [Heroku](https://dino-rama.herokuapp.com)
 
-## Update Heroku!!!!!!!!!!!!!!!!!!!!!
 
 ## Technical Specifications
 This application has:
