@@ -24,8 +24,8 @@ class App extends Component {
                     </div>
                     <Switch>
                         <Route exact path="/" component={HomePage}/>
-                        <Route exact path="/dinosaurs" component={DinosaurList}/>
-                        <Route path="/dinosaur/:dinosaurId" component={Dinosaur}/>
+                        <Route exact path="/dinosaurs/" component={DinosaurList}/>
+                        <Route path="/dinosaurs/:id/" component={Dinosaur}/>
                     </Switch>
                 </div>
             </Router>

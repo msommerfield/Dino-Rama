@@ -21,3 +21,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+#dinoz a {
+    background-color: rgba(4, 44, 61, .5);
+    text-decoration: none;
+    font-family: 'Lora', serif;
+    color: rgb(255, 248, 220);
+    display: flex;
+    text-shadow: 2px 2px 4px #000000;
+    padding: 20px;
+    margin: 20px;
+    max-width: 20%;
+}

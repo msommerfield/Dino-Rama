@@ -3,6 +3,23 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 
+
+const FancyFont = styled.div`
+    color: rgb(255, 248, 220);
+    margin-top: 70px;
+    font-size: 50px;
+    text-shadow: 2px 2px 4px #000000;
+    font-family: 'Domine', serif;
+
+    #dinoz{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    
+    }
+`;
+
 class DinosaurList extends Component {
     state = {
         error: '',
@@ -22,7 +39,7 @@ class DinosaurList extends Component {
 
     fetchDinosaurs = async () => {
         try {
-            const res = await axios.get('/dinosaurs');
+            const res = await axios.get('/api/v1/dinosaurs/');
             this.setState({dinosaurs: res.data});
         }
         catch (err) {
@@ -34,7 +51,7 @@ class DinosaurList extends Component {
     createDinosaur = async (e) => {
         e.preventDefault()
         try {
-            const res = axios.post('/api/v1/', this.state.newDinosaur)
+            const res = axios.post('/api/v1/dinosaurs/', this.state.newDinosaur)
         }
         catch(err) {
             console.log(err)
@@ -46,25 +63,54 @@ class DinosaurList extends Component {
         clonedNewDinosaur[e.target.name] = e.target.value
 
         this.setState({
-            newArtist: clonedNewDinosaur
+            newDinosaur: clonedNewDinosaur
         })
     }
-
     render() {
         if (this.state.error){
             return <div>{this.state.error}</div>
         }
         return (
             <div>
-                <h1>All Dinosaurs</h1>
-                {this.state.dinosaurs.map((dinosaur, i )=> (
-                    <div key={i}>
-                        <Link to={`/dinosaur/${dinosaur.id}`} >{dinosaur.name}</Link>
+                <FancyFont>
+                    <h1>All Dinosaurs</h1>
+                </FancyFont>
+                <div>
+                {this.state.dinosaurs.map(dinosaur => (
+                    <div id="dinoz" key={dinosaur.id}>
+                        <Link to={`/dinosaurs/${dinosaur.id}`} >{dinosaur.name}</Link>
                     </div>
                 ))}
+                </div>
+                <h2>Create New Dinosaur</h2>
+                <form onSubmit={this.createDinosaur}>
+                    <input
+                        type="text"
+                        name="name"
+                        value={this.state.newDinosaur.name}
+                        onChange={this.handleChange}
+                    />
+                </form>
             </div>
         );
     }
 }
+
+//     render() {
+//         if (this.state.error){
+//             return <div>{this.state.error}</div>
+//         }
+//         return (
+//             <div>
+//                 <h1>All Dinosaurs</h1>
+//                 {this.state.dinosaurs.map((dinosaur, i )=> (
+//                     <div key={i}>
+//                         <Link to={`/dinosaur/${dinosaur.id}`} >{dinosaur.name}</Link>
+//                     </div>
+//                 ))}
+//             </div>
+//         );
+//     }
+// }
 
 export default DinosaurList;
