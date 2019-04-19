@@ -12,10 +12,18 @@ const StyledLink = styled.link`
   `;
 
 const FancyFont = styled.div`
+    color: rgb(255, 248, 220);
+    margin-top: 20px;
+    font-size: 40px;
+    text-shadow: 2px 2px 4px #000000;
+    font-family: 'Domine', serif;
 `;
 
 const FormDinosaur = styled.div`
     text-shadow: 2px 2px 4px #000000;
+    color: rgb(255, 248, 220);
+    margin: 20px;
+    background-color: rgba(4, 44, 61, .5);
 `;
 
 const Pics = styled.div`
@@ -46,12 +54,20 @@ class Dinosaur extends Component {
             fossil: '',
         },
         isDinosaurFormDisplayed: false,
-        redirect: false
+        redirect: false,
+        dietResponse: {},
+        locationResponse: {}
     }
 
     componentDidMount() {
         const dinosaurId = this.props.match.params.id;
-        this.fetchDinosaur(dinosaurId)
+        this.fetchDinosaur(dinosaurId).then(()=>{
+            this.fetchDiet( `${this.state.dinosaur.diet}`)}
+            
+            )
+        .then(()=>{
+            this.fetchLocation( `${this.state.dinosaur.location}`)}
+            )
     }
 
     fetchDinosaur = async (dinosaurId) => {
@@ -68,11 +84,22 @@ class Dinosaur extends Component {
         }
     }
 
-    fetchDinosaur = async (dinosaurId) => {
+    fetchLocation = async (locationId) => {
         try {
-            const res = await axios.get(`/api/v1/dinosaurs/${dinosaurId}/`)
+            const res = await axios.get(`/api/v1/locations/${locationId}/`)
             this.setState({
-                dinosaur: res.data,
+                locationResponse: res.data,
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+        fetchDiet = async (dietId) => {
+        try {
+            const res = await axios.get(`/api/v1/diets/${dietId}/`)
+            this.setState({
+                dietResponse: res.data
             })
         }
         catch (err) {
@@ -92,10 +119,10 @@ class Dinosaur extends Component {
         }
     }
 
-    updateDinosaur = async (e) => {
+    updateDinosaur = async (e, dinosaurId) => {
         e.preventDefault()
         try {
-            const res = await axios.put(`/api/v1/dinosaurs/${this.props.match.params.id}/`, this.state.dinosaur)
+            const res = await axios.put(`/api/v1/dinosaurs/${dinosaurId}/`)
             this.setState({
                 dinosaur: res.data,
                 isEditFormDisplayed: false
@@ -143,8 +170,13 @@ class Dinosaur extends Component {
                     <div>{this.state.dinosaur.name}</div>
                     <div>{this.state.dinosaur.estimated_height}</div>
                     <div>{this.state.dinosaur.estimated_mass}</div>
-                    <div>{this.state.dinosaur.diet}</div>
-                    <div>{this.state.dinosaur.location}</div>
+                    <div>{this.state.dietResponse.diet}</div>
+                    <div>{this.state.locationResponse.region}</div>
+                    <div>{this.state.locationResponse.time_period}</div>
+
+
+
+
                     <div>
                         <button onClick={this.toggleDinosaurForm}>Evolve Dino</button>
                         {
@@ -157,7 +189,7 @@ class Dinosaur extends Component {
                                     value={this.state.dinosaur.name}
                                     type="text"
                                     name="name"
-                                    onChange={this._handleChange}
+                                    onChange={this.handleChange}
                                 />
                             </div>
                             <div>
@@ -166,7 +198,7 @@ class Dinosaur extends Component {
                                     value={this.state.dinosaur.estimated_height}
                                     type="text"
                                     name="estimated_height"
-                                    onChange={this._handleChange}
+                                    onChange={this.handleChange}
                                 />
                             </div>
                             <div>
@@ -175,34 +207,34 @@ class Dinosaur extends Component {
                                     value={this.state.dinosaur.estimated_mass}
                                     type="text"
                                     name="estimated_mass"
-                                    onChange={this._handleChange}
+                                    onChange={this.handleChange}
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label htmlFor="diet">Diet</label>
                                 <input
                                     value={this.state.dinosaur.diet}
                                     type="text"
                                     name="diet"
-                                    onChange={this._handleChange}
-                                />
-                            </div>
+                                    onChange={this.handleChange}
+                                /> */}
+                            {/* </div>
                             <div>
                                 <label htmlFor="location">location</label>
                                 <input
                                     value={this.state.dinosaur.location}
                                     type="text"
                                     name="location"
-                                    onChange={this._handleChange}
-                                />
-                            </div>
+                                    onChange={this.handleChange}
+                                /> */}
+                            {/* </div> */}
                             <div>
                                 <label htmlFor="image">Image Link: </label>
                                 <input
                                     value={this.state.dinosaur.image}
                                     type="text"
                                     name="image"
-                                    onChange={this._handleChange}
+                                    onChange={this.handleChange}
                                 />
                             </div>
                             <div>
@@ -211,7 +243,7 @@ class Dinosaur extends Component {
                                     value={this.state.dinosaur.fossil}
                                     type="text"
                                     name="fossil"
-                                    onChange={this._handleChange}
+                                    onChange={this.handleChange}
                                 />
                             </div>
                         <ButtonWrapper>

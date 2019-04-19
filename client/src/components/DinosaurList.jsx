@@ -16,6 +16,8 @@ const FancyFont = styled.div`
     align-items: center;
     flex-direction: row;
     justify-content: center;
+    padding: 10px;
+    margin: 0 auto;
     
     }
 `;
@@ -82,35 +84,10 @@ class DinosaurList extends Component {
                     </div>
                 ))}
                 </div>
-                <h2>Create New Dinosaur</h2>
-                <form onSubmit={this.createDinosaur}>
-                    <input
-                        type="text"
-                        name="name"
-                        value={this.state.newDinosaur.name}
-                        onChange={this.handleChange}
-                    />
-                </form>
             </div>
         );
     }
 }
 
-//     render() {
-//         if (this.state.error){
-//             return <div>{this.state.error}</div>
-//         }
-//         return (
-//             <div>
-//                 <h1>All Dinosaurs</h1>
-//                 {this.state.dinosaurs.map((dinosaur, i )=> (
-//                     <div key={i}>
-//                         <Link to={`/dinosaur/${dinosaur.id}`} >{dinosaur.name}</Link>
-//                     </div>
-//                 ))}
-//             </div>
-//         );
-//     }
-// }
 
 export default DinosaurList;
