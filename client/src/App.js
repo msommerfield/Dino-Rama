@@ -19,17 +19,13 @@ class App extends Component {
         return (
             <Router>
                 <div className="App">
-                        {/* <div>
-                            <div><StyledLink to="/">All Dinos</StyledLink></div>
-                        </div> */}
-                   
                     <div>
                         <NavigationBar/>
                     </div>
                     <Switch>
                         <Route exact path="/" component={HomePage}/>
-                        <Route exact path="/dinosaur" component={Dinosaur}/>
-                        <Route path="/dinosaur/:dinosaurId" component={DinosaurList}/>
+                        <Route exact path="/dinosaurs" component={DinosaurList}/>
+                        <Route path="/dinosaur/:dinosaurId" component={Dinosaur}/>
                     </Switch>
                 </div>
             </Router>

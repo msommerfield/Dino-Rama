@@ -22,7 +22,7 @@ class DinosaurList extends Component {
 
     fetchDinosaurs = async () => {
         try {
-            const res = await axios.get('/api/v1/dinosaurs');
+            const res = await axios.get('/dinosaurs');
             this.setState({dinosaurs: res.data});
         }
         catch (err) {

@@ -7,7 +7,7 @@ const Wrapper = styled.div`
     color: white;
     padding-top: 60px;
     margin-top: 90px;
-    font-size: 80px;
+    font-size: 90px;
     text-shadow: 2px 2px 4px #000000;
 
     /* a {
@@ -19,8 +19,6 @@ const Wrapper = styled.div`
     text-shadow: 2px 2px 4px #000000;
     } */
     `
-
-
 
 class HomePage extends Component {
     render() {
