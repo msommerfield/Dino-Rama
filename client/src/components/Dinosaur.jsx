@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
+
 
 
 const StyledLink = styled.link`
@@ -73,6 +73,7 @@ class Dinosaur extends Component {
     fetchDinosaur = async (dinosaurId) => {
         try {
             const dinosaurResponse = await axios.get(`/api/v1/dinosaurs/${dinosaurId}/`)
+
             this.setState({
                 dinosaur: dinosaurResponse.data,
             })
@@ -119,12 +120,14 @@ class Dinosaur extends Component {
         }
     }
 
-    updateDinosaur = async (e, dinosaurId) => {
+    updateDinosaur = async (e) => {
         e.preventDefault()
         try {
-            const res = await axios.put(`/api/v1/dinosaurs/${dinosaurId}/`)
+            const dinoRes = await axios.put(`/api/v1/dinosaurs/${this.state.dinosaur.id}/`, this.state.dinosaur)
+            const dietRes = await axios.put(`/api/v1/diets/${this.state.dietResponse.id}/`, this.state.dietResponse)
             this.setState({
-                dinosaur: res.data,
+                dinosaur: dinoRes.data,
+                dietResponse: dietRes.data,
                 isEditFormDisplayed: false
             })
         }
@@ -139,6 +142,15 @@ class Dinosaur extends Component {
 
         this.setState({
             dinosaur: clonedDinosaur
+        })
+    }
+
+    handleDietChange = (e) => {
+        const clonedDiet = { ...this.state.dietResponse }
+        clonedDiet[e.target.name] = e.target.value
+
+        this.setState({
+            dietResponse: clonedDiet
         })
     }
 
@@ -170,7 +182,10 @@ class Dinosaur extends Component {
                     <div>{this.state.dinosaur.name}</div>
                     <div>{this.state.dinosaur.estimated_height}</div>
                     <div>{this.state.dinosaur.estimated_mass}</div>
+                   
+                    {/* <Diet dietResponse={this.state.dietResponse}  /> */}
                     <div>{this.state.dietResponse.diet}</div>
+    {/* dietttttttttttttttt */}
                     <div>{this.state.locationResponse.region}</div>
                     <div>{this.state.locationResponse.time_period}</div>
 
@@ -202,6 +217,16 @@ class Dinosaur extends Component {
                                 />
                             </div>
                             <div>
+                                <label htmlFor="diet">Diet</label>
+                                <input
+                                    id="diet"
+                                    value={this.state.dietResponse.diet}
+                                    type="text"
+                                    name="diet"
+                                    onChange={this.handleDietChange}
+                                />
+                            </div>
+                            <div>
                                 <label htmlFor="estimated_mass">Estimated Mass:</label>
                                 <input
                                     value={this.state.dinosaur.estimated_mass}
@@ -210,24 +235,6 @@ class Dinosaur extends Component {
                                     onChange={this.handleChange}
                                 />
                             </div>
-                            {/* <div>
-                                <label htmlFor="diet">Diet</label>
-                                <input
-                                    value={this.state.dinosaur.diet}
-                                    type="text"
-                                    name="diet"
-                                    onChange={this.handleChange}
-                                /> */}
-                            {/* </div>
-                            <div>
-                                <label htmlFor="location">location</label>
-                                <input
-                                    value={this.state.dinosaur.location}
-                                    type="text"
-                                    name="location"
-                                    onChange={this.handleChange}
-                                /> */}
-                            {/* </div> */}
                             <div>
                                 <label htmlFor="image">Image Link: </label>
                                 <input
