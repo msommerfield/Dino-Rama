@@ -55,19 +55,27 @@ class Dinosaur extends Component {
         },
         isDinosaurFormDisplayed: false,
         redirect: false,
-        dietResponse: {},
-        locationResponse: {}
+        dietResponse: {
+            diet: ''
+        },
+        locationResponse: {
+            region: '',
+            time_period: ''
+        }
     }
 
     componentDidMount() {
         const dinosaurId = this.props.match.params.id;
-        this.fetchDinosaur(dinosaurId).then(()=>{
-            this.fetchDiet( `${this.state.dinosaur.diet}`)}
+        // this.fetchDinosaur(dinosaurId).then(()=>{
+        //     this.fetchDiet( `${this.state.dinosaur.diet}`)}
             
-            )
-        .then(()=>{
-            this.fetchLocation( `${this.state.dinosaur.location}`)}
-            )
+        //     )
+        // .then(()=>{
+        //     this.fetchLocation( `${this.state.dinosaur.location}`)}
+        //     )
+        this.fetchDinosaur()
+        this.fetchLocation()
+        this.fetchDiet()
     }
 
     fetchDinosaur = async (dinosaurId) => {
@@ -126,9 +134,11 @@ class Dinosaur extends Component {
         try {
             const dinoRes = await axios.put(`/api/v1/dinosaurs/${this.state.dinosaur.id}/`, this.state.dinosaur)
             const dietRes = await axios.put(`/api/v1/diets/${this.state.dietResponse.id}/`, this.state.dietResponse)
+            const locationRes = await axios.put(`/api/v1/locations/${this.state.locationResponse.id}/`, this.state.locationResponse)
             this.setState({
                 dinosaur: dinoRes.data,
                 dietResponse: dietRes.data,
+                locationResponse: locationRes.data,
                 isEditFormDisplayed: false
             })
         }
@@ -152,6 +162,14 @@ class Dinosaur extends Component {
 
         this.setState({
             dietResponse: clonedDiet
+        })
+    }
+    handleLocationChange = (e) => {
+        const clonedLocation = { ...this.state.locationResponse }
+        clonedLocation[e.target.name] = e.target.value
+
+        this.setState({
+            locationResponse: clonedLocation
         })
     }
 
@@ -183,15 +201,10 @@ class Dinosaur extends Component {
                     <div>{this.state.dinosaur.name}</div>
                     <div>{this.state.dinosaur.estimated_height}</div>
                     <div>{this.state.dinosaur.estimated_mass}</div>
-                   
-                    {/* <Diet dietResponse={this.state.dietResponse}  /> */}
                     <div>{this.state.dietResponse.diet}</div>
-    {/* dietttttttttttttttt */}
                     <div>{this.state.locationResponse.region}</div>
                     <div>{this.state.locationResponse.time_period}</div>
-
-
-
+                   
 
                     <div>
                         <button onClick={this.toggleDinosaurForm}>Evolve Dino</button>
@@ -225,6 +238,26 @@ class Dinosaur extends Component {
                                     type="text"
                                     name="diet"
                                     onChange={this.handleDietChange}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="region">Region</label>
+                                <input
+                                    id="region"
+                                    value={this.state.locationResponse.region}
+                                    type="text"
+                                    name="region"
+                                    onChange={this.handleLocationChange}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="time_period">Time Period</label>
+                                <input
+                                    id="time_period"
+                                    value={this.state.locationResponse.time_period}
+                                    type="text"
+                                    name="time_period"
+                                    onChange={this.handleLocationChange}
                                 />
                             </div>
                             <div>
