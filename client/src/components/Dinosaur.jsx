@@ -108,7 +108,8 @@ class Dinosaur extends Component {
         }
     }
 
-    deleteDinosaur = async () => {
+    deleteDinosaur = async (e) => {
+        e.preventDefault()
         try {
             const res = await axios.delete(`/api/v1/dinosaurs/${this.props.match.params.id}/`)
             this.setState({
