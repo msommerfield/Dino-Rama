@@ -27,7 +27,7 @@ class NavigationBar extends Component {
             <Wrapper>
                 <a href="/">Home</a>
                 <a href="/dinosaurs">All Dinos</a>
-                <a href="/dinosaur/:dinosaurId">Dinosaur</a>
+                <a href="/dinosounds/">Dinosaur Sounds</a>
             </Wrapper>
         )
     }

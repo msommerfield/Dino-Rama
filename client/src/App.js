@@ -6,6 +6,7 @@ import NavigationBar from './components/NavigationBar';
 import HomePage from './components/HomePage';
 import "./App.css";
 import styled from 'styled-components';
+import DinoSoundz from "./components/DinoSoundz";
 
 
 const StyledLink = styled(Link)`
@@ -26,6 +27,8 @@ class App extends Component {
                         <Route exact path="/" component={HomePage}/>
                         <Route exact path="/dinosaurs/" component={DinosaurList}/>
                         <Route path="/dinosaurs/:id/" component={Dinosaur}/>
+                        <Route path="/dinosounds/" component={DinoSoundz}/>
+
                     </Switch>
                 </div>
             </Router>
