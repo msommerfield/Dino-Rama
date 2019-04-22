@@ -49,7 +49,9 @@ class DinosaurList extends Component {
             estimated_mass: '',
             image: '',
             fossil: '',
-            diet: ''
+            diet: '',
+            region: '',
+            time_period: ''
         },
         
         isDinosaurFormDisplayed: false,
