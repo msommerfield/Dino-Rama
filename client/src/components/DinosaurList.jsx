@@ -50,10 +50,14 @@ class DinosaurList extends Component {
             image: '',
             fossil: '',
             diet: '',
+            location: ''
+        },
+        newDiet: '',
+        newLocation: {
             region: '',
             time_period: ''
         },
-        
+
         isDinosaurFormDisplayed: false,
         redirect: false,
         dietResponse: {
@@ -62,11 +66,28 @@ class DinosaurList extends Component {
         locationResponse: {
             region: '',
             time_period: ''
-        }
+        },
+        dietOptions: [],
+        locationOptions: [],
     }
 
     componentDidMount() {
         this.fetchDinosaurs();
+        this.fetchDietAndLocation()
+    }
+
+    fetchDietAndLocation = async () => {
+        try {
+            const dietRes = await axios.get('/api/v1/diets/')
+            const locationRes = await axios.get('/api/v1/locations/')
+            this.setState({
+                dietOptions: dietRes.data,
+                locationOptions: locationRes.data,
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     fetchDinosaurs = async () => {
@@ -91,7 +112,7 @@ class DinosaurList extends Component {
             console.log(err)
         }
     }
-        fetchDiet = async (dietId) => {
+    fetchDiet = async (dietId) => {
         try {
             const res = await axios.get(`/api/v1/diets/${dietId}/`)
             this.setState({
@@ -105,25 +126,21 @@ class DinosaurList extends Component {
 
     createDinosaur = async (e) => {
         e.preventDefault()
+        let { name, estimated_height, estimated_mass, image, fossil, diet, location } = this.state.newDinosaur
         try {
-        //    fix state to individ packages
-            const dietRes = await axios.post(`/api/v1/diets/`, this.state.dietResponse)
-            let clonedDiet = { ...this.state.newDinosaur}
-            console.log(dietRes)
-            console.log(dietRes.data.id)
-            clonedDiet.diet = dietRes.data.id;
-            this.setState({ newDinosaur: clonedDiet})  
-            
-        }catch (err) {
-            console.log(err)
-        }
-        try{
-            const locationRes = await axios.post(`/api/v1/locations/`, this.state.locationResponse)
-            // this.setState({ location: locationRes.id})
-            const dinoRes = await axios.post(`/api/v1/dinosaurs/`, this.state.dinosaur)
-            // this.fetchDinosaurs();
-        }
-        catch (err) {
+            //    fix state to individ packages
+            const dinoRes = await axios.post(`/api/v1/dinosaurs/`, {
+                name: name,
+                estimated_height: estimated_height,
+                estimated_mass: estimated_mass,
+                image: image,
+                fossil: fossil,
+                diet: diet || this.state.dietOptions[0].id,
+                location: location || this.state.locationOptions[0].id
+            })
+            console.log(dinoRes)
+
+        } catch (err) {
             console.log(err)
         }
     }
@@ -145,6 +162,23 @@ class DinosaurList extends Component {
             dietResponse: clonedDiet
         })
     }
+
+    handleNewLocationChange = (e) => {
+        const newLocation = { ...this.state.newLocation }
+        newLocation[e.target.name] = e.target.value
+
+        this.setState({
+            newLocation: newLocation
+        })
+    }
+
+    handleNewDietChange = (e) => {
+        this.setState({
+            newDiet: e.target.value
+        })
+    }
+
+
     handleLocationChange = (e) => {
         const clonedLocation = { ...this.state.locationResponse }
         clonedLocation[e.target.name] = e.target.value
@@ -159,7 +193,26 @@ class DinosaurList extends Component {
             return { isDinosaurFormDisplayed: !state.isDinosaurFormDisplayed }
         })
     }
-   
+
+    createDiet = async (e) => {
+        e.preventDefault()
+        const res = await axios.post('/api/v1/diets/', { diet: this.state.newDiet })
+    }
+
+    createLocation = async (e) => {
+        e.preventDefault()
+        const res = await axios.post('/api/v1/locations/', { location: this.state.newLocation })
+    }
+
+    deleteDiet = async (dietId) => {
+        const res = await axios.delete(`/api/v1/diets/${dietId}/`)
+        this.fetchDietAndLocation()
+    }
+
+    deleteLocation = async (locationId) => {
+        const res = await axios.delete(`/api/v1/locations/${locationId}/`)
+        this.fetchDietAndLocation()
+    }
 
     render() {
         if (this.state.error) {
@@ -179,104 +232,167 @@ class DinosaurList extends Component {
                 </div>
                 <div>
                     <FormDinosaur>
-                    <h2>Create Dino</h2>
-                    <form onSubmit={this.createDinosaur}>
-                    <Pics>
-                        <img src={this.state.newDinosaur.image}></img>
-                    </Pics>
-                    <Pics>
-                        <img src={this.state.newDinosaur.fossil}></img>
-                    </Pics>
-                    <div>{this.state.newDinosaur.name}</div>
-                    <div>{this.state.newDinosaur.estimated_height}</div>
-                    <div>{this.state.newDinosaur.estimated_mass}</div>
-                    <div>{this.state.dietResponse.diet}</div>
-                    <div>{this.state.locationResponse.region}</div>
-                    <div>{this.state.locationResponse.time_period}</div>
-                        <div>
-                            <label htmlFor="name">Name: </label>
-                            <input
-                                value={this.state.newDinosaur.name}
-                                type="text"
-                                name="name"
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="estimated_height">Estimated Height</label>
-                            <input
-                                value={this.state.newDinosaur.estimated_height}
-                                type="text"
-                                name="estimated_height"
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="diet">Diet</label>
-                            <input
-                                // id="diet"
-                                value={this.state.dietResponse.diet}
-                                type="text"
-                                name="diet"
-                                onChange={this.handleDietChange}
-                            />
-                        </div>
-                        <div>
-                                <label htmlFor="region">Region</label>
+                        <h2>Create Dino</h2>
+                        <form onSubmit={this.createDinosaur}>
+                            <Pics>
+                                <img src={this.state.newDinosaur.image}></img>
+                            </Pics>
+                            <Pics>
+                                <img src={this.state.newDinosaur.fossil}></img>
+                            </Pics>
+                            <div>{this.state.newDinosaur.name}</div>
+                            <div>{this.state.newDinosaur.estimated_height}</div>
+                            <div>{this.state.newDinosaur.estimated_mass}</div>
+                            <div>{this.state.dietResponse.diet}</div>
+                            <div>{this.state.locationResponse.region}</div>
+                            <div>{this.state.locationResponse.time_period}</div>
+                            <div>
+                                <label htmlFor="name">Name: </label>
                                 <input
-                                    id="region"
-                                    value={this.state.locationResponse.region}
+                                    value={this.state.newDinosaur.name}
                                     type="text"
-                                    name="region"
-                                    onChange={this.handleLocationChange}
+                                    name="name"
+                                    onChange={this.handleChange}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="time_period">Time Period</label>
+                                <label htmlFor="estimated_height">Estimated Height</label>
                                 <input
-                                    id="time_period"
-                                    value={this.state.locationResponse.time_period}
+                                    value={this.state.newDinosaur.estimated_height}
                                     type="text"
-                                    name="time_period"
-                                    onChange={this.handleLocationChange}
+                                    name="estimated_height"
+                                    onChange={this.handleChange}
                                 />
                             </div>
-                        <div>
-                            <label htmlFor="estimated_mass">Estimated Mass:</label>
-                            <input
-                                value={this.state.newDinosaur.estimated_mass}
-                                type="text"
-                                name="estimated_mass"
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="image">Image Link: </label>
-                            <input
-                                value={this.state.newDinosaur.image}
-                                type="text"
-                                name="image"
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="fossil">Fossil Link: </label>
-                            <input
-                                value={this.state.newDinosaur.fossil}
-                                type="text"
-                                name="fossil"
-                                onChange={this.handleChange}
-                            />
-                        </div>
-                        <button>+ Dino</button>
-                    </form>
+                            <div>
+                                <label htmlFor="diet">Diet</label>
+                                <select id="diet" name="diet" onChange={this.handleChange}>
+                                    {
+                                        this.state.dietOptions.map(diet => {
+                                            return (
+                                                <option key={diet.id} value={diet.id}>{diet.diet}</option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="location">Location</label>
+                                <select id="location" name="location" onChange={this.handleChange}>
+                                    {
+                                        this.state.locationOptions.map(location => {
+                                            return (
+                                                <option key={location.id} value={location.id}>{`${location.region} - ${location.time_period}`}</option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="estimated_mass">Estimated Mass:</label>
+                                <input
+                                    value={this.state.newDinosaur.estimated_mass}
+                                    type="text"
+                                    name="estimated_mass"
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="image">Image Link: </label>
+                                <input
+                                    value={this.state.newDinosaur.image}
+                                    type="text"
+                                    name="image"
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="fossil">Fossil Link: </label>
+                                <input
+                                    value={this.state.newDinosaur.fossil}
+                                    type="text"
+                                    name="fossil"
+                                    onChange={this.handleChange}
+                                />
+                            </div>
+                            <button>+ Dino</button>
+                        </form>
                     </FormDinosaur>
                 </div>
+                <div>
+                    <FormDinosaur>
+                    <div>
+                        {this.state.dietOptions.map(diet => {
+                            return (
+                                <div key={diet.id}>
+                                    <p>{diet.diet}</p>
+                                    <button onClick={() => this.deleteDiet(diet.id)}>Delete</button>
+                                </div>
+                            )
+                        })
 
-            </div>
-        );
-    }
-}
+                        }
+                        <form onSubmit={this.createDiet}>
+                            <label>+ Diet</label>
+                            <input
+                                value={this.state.newDiet}
+                                type="text"
+                                name="diet"
+                                onChange={this.handleNewDietChange}
+                            />
+                            <div>
+                                <button onClick={this.createDiet}>Create Diet</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+
+                        <div>
+                            {this.state.locationOptions.map(location => {
+                                return (
+                                    <div key={location.id}>
+                                        <p>{location.time_period}</p>
+                                        <p>{location.region}</p>
+                                        <button onClick={() => this.deleteLocation(location.id)}>Delete</button>
+                                    </div>
+                                )
+                            })
+
+                            }
+                            <form onSubmit={this.createLocation}>
+                                <label htmlFor="time_period">+ Time Period</label>
+                                <input
+                                    value={this.state.newLocation}
+                                    type="text"
+                                    name="time_period"
+                                    onChange={this.handleNewLocationChange}
+                                />
+                                <div>
+                                    <button onClick={this.createLocation}>+ Time Period</button>
+                                </div>
 
 
+                                <label htmlFor="region">+ Region</label>
+                                <input
+                                    value={this.state.newLocation}
+                                    type="text"
+                                    name="region"
+                                    onChange={this.handleNewLocationChange}
+                                />
+                                <div>
+                                    <button onClick={this.createLocation}>+ Region</button>
+                                </div>
+                            </form>
+
+                        </div>
+                        
+                        </div>
+                    </FormDinosaur>
+                    </div>
+                </div>
+                );
+            }
+        }
+        
+        
 export default DinosaurList;

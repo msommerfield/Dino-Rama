@@ -66,16 +66,13 @@ class Dinosaur extends Component {
 
     componentDidMount() {
         const dinosaurId = this.props.match.params.id;
-        // this.fetchDinosaur(dinosaurId).then(()=>{
-        //     this.fetchDiet( `${this.state.dinosaur.diet}`)}
-            
-        //     )
-        // .then(()=>{
-        //     this.fetchLocation( `${this.state.dinosaur.location}`)}
-        //     )
-        this.fetchDinosaur()
-        this.fetchLocation()
-        this.fetchDiet()
+        this.fetchDinosaur(dinosaurId)
+            .then(()=>{
+                this.fetchDiet(`${this.state.dinosaur.diet}`)
+            })
+            .then(()=>{
+                this.fetchLocation( `${this.state.dinosaur.location}`)
+            })
     }
 
     fetchDinosaur = async (dinosaurId) => {
@@ -230,7 +227,35 @@ class Dinosaur extends Component {
                                     onChange={this.handleChange}
                                 />
                             </div>
+
                             <div>
+                                <label htmlFor="diet">Diet</label>
+                                <select id="diet" name="diet" onChange={this.handleChange}>
+                                    {
+                                        this.state.dietOptions.map(diet => {
+                                            return (
+                                                <option key={diet.id} value={diet.id}>{diet.diet}</option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <label htmlFor="location">Location</label>
+                                <select id="location" name="location" onChange={this.handleChange}>
+                                    {
+                                        this.state.locationOptions.map(location => {
+                                            return (
+                                                <option key={location.id} value={location.id}>{`${location.region} - ${location.time_period}`}</option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                            </div>
+
+
+
+                            {/* <div>
                                 <label htmlFor="diet">Diet</label>
                                 <input
                                     id="diet"
@@ -259,7 +284,7 @@ class Dinosaur extends Component {
                                     name="time_period"
                                     onChange={this.handleLocationChange}
                                 />
-                            </div>
+                            </div> */}
                             <div>
                                 <label htmlFor="estimated_mass">Estimated Mass:</label>
                                 <input
