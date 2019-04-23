@@ -9,8 +9,19 @@ img {
     height: 300px;
     width:300px;
     border-radius: 50%;
+    margin-top: 20px;
 }
     `
+const Button = styled.button`
+color: rgb(255, 248, 220);
+text-shadow: 2px 2px 4px #000000;
+background-color: rgba(4, 44, 61, .5);
+font-size: 1em;
+margin: 1em;
+padding: 0.25em 1em;
+border: 2px;
+border-radius: 3px;
+`
 
 export default class DinoSoundz extends Component {
 
@@ -40,9 +51,9 @@ export default class DinoSoundz extends Component {
       <Wrapper>
           {
               this.state.showImage ?
-              <button onClick={() => this.toggleImage()}>Tooo scary....HIDE!</button>
+              <Button onClick={() => this.toggleImage()}>Tooo scary....HIDE!</Button>
               :
-              <button onClick={() => this.toggleImage()}>How Did Dinosaurs Die?</button>
+              <Button onClick={() => this.toggleImage()}>How Did Dinosaurs Die?</Button>
 
           }
         {

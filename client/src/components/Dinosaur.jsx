@@ -4,13 +4,6 @@ import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 
 
-
-const StyledLink = styled.link`
-  color: palevioletred;
-  font-weight: bold;
-  text-decoration: none;
-  `;
-
 const FancyFont = styled.div`
     color: rgb(255, 248, 220);
     margin-top: 20px;
@@ -38,8 +31,16 @@ img {
 }
 `;
 
-const ButtonWrapper = styled.div`
-`;
+const Button = styled.button`
+    text-shadow: 2px 2px 4px #000000;
+    background-color: rgba(4, 44, 61, .5);
+    font-size: 1em;
+    margin: 1em;
+    padding: 0.25em 1em;
+    color: rgb(255, 248, 220);
+    border: 2px;
+    border-radius: 3px;
+`
 
 class Dinosaur extends Component {
 
@@ -61,17 +62,19 @@ class Dinosaur extends Component {
         locationResponse: {
             region: '',
             time_period: ''
-        }
+        },
+        dietOptions: [],
+        locationOptions: [],
     }
 
     componentDidMount() {
         const dinosaurId = this.props.match.params.id;
         this.fetchDinosaur(dinosaurId)
-            .then(()=>{
+            .then(() => {
                 this.fetchDiet(`${this.state.dinosaur.diet}`)
             })
-            .then(()=>{
-                this.fetchLocation( `${this.state.dinosaur.location}`)
+            .then(() => {
+                this.fetchLocation(`${this.state.dinosaur.location}`)
             })
     }
 
@@ -86,7 +89,7 @@ class Dinosaur extends Component {
         }
         catch (error) {
             console.log(error)
-            this.setState({error: error.message})
+            this.setState({ error: error.message })
         }
     }
 
@@ -101,11 +104,25 @@ class Dinosaur extends Component {
             console.log(err)
         }
     }
-        fetchDiet = async (dietId) => {
+    fetchDiet = async (dietId) => {
         try {
             const res = await axios.get(`/api/v1/diets/${dietId}/`)
             this.setState({
                 dietResponse: res.data
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+
+    fetchDietAndLocation = async () => {
+        try {
+            const dietRes = await axios.get('/api/v1/diets/')
+            const locationRes = await axios.get('/api/v1/locations/')
+            this.setState({
+                dietOptions: dietRes.data,
+                locationOptions: locationRes.data,
             })
         }
         catch (err) {
@@ -161,6 +178,7 @@ class Dinosaur extends Component {
             dietResponse: clonedDiet
         })
     }
+
     handleLocationChange = (e) => {
         const clonedLocation = { ...this.state.locationResponse }
         clonedLocation[e.target.name] = e.target.value
@@ -176,7 +194,6 @@ class Dinosaur extends Component {
         })
     }
 
-
     render() {
         if (this.state.redirect) {
             return <Redirect to={`/dinosaurs/`} />
@@ -190,10 +207,10 @@ class Dinosaur extends Component {
 
                 <FormDinosaur>
                     <Pics>
-                        <img src={this.state.dinosaur.image}></img>
+                        <img src={this.state.dinosaur.image} alt="dinosaur images"></img>
                     </Pics>
                     <Pics>
-                        <img src={this.state.dinosaur.fossil}></img>
+                        <img src={this.state.dinosaur.fossil} alt="dinosaur fossil images"></img>
                     </Pics>
                     <div>{this.state.dinosaur.name}</div>
                     <div>{this.state.dinosaur.estimated_height}</div>
@@ -201,133 +218,96 @@ class Dinosaur extends Component {
                     <div>{this.state.dietResponse.diet}</div>
                     <div>{this.state.locationResponse.region}</div>
                     <div>{this.state.locationResponse.time_period}</div>
-                   
+
 
                     <div>
-                        <button onClick={this.toggleDinosaurForm}>Evolve Dino</button>
+                        <Button onClick={this.toggleDinosaurForm}>Evolve Dino</Button>
                         {
                             this.state.isDinosaurFormDisplayed
-                            ?
-                        <form>
-                            <div>
-                                <label htmlFor="name">Name: </label>
-                                <input
-                                    value={this.state.dinosaur.name}
-                                    type="text"
-                                    name="name"
-                                    onChange={this.handleChange}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="estimated_height">Estimated Height</label>
-                                <input
-                                    value={this.state.dinosaur.estimated_height}
-                                    type="text"
-                                    name="estimated_height"
-                                    onChange={this.handleChange}
-                                />
-                            </div>
+                                ?
+                                <form>
+                                    <div>
+                                        <label htmlFor="name">Name: </label>
+                                        <input
+                                            value={this.state.dinosaur.name}
+                                            type="text"
+                                            name="name"
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="estimated_height">Estimated Height</label>
+                                        <input
+                                            value={this.state.dinosaur.estimated_height}
+                                            type="text"
+                                            name="estimated_height"
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
 
-                            <div>
-                                <label htmlFor="diet">Diet</label>
-                                <select id="diet" name="diet" onChange={this.handleChange}>
-                                    {
-                                        this.state.dietOptions.map(diet => {
-                                            return (
-                                                <option key={diet.id} value={diet.id}>{diet.diet}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="location">Location</label>
-                                <select id="location" name="location" onChange={this.handleChange}>
-                                    {
-                                        this.state.locationOptions.map(location => {
-                                            return (
-                                                <option key={location.id} value={location.id}>{`${location.region} - ${location.time_period}`}</option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div>
-
-
-
-                            {/* <div>
-                                <label htmlFor="diet">Diet</label>
-                                <input
-                                    id="diet"
-                                    value={this.state.dietResponse.diet}
-                                    type="text"
-                                    name="diet"
-                                    onChange={this.handleDietChange}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="region">Region</label>
-                                <input
-                                    id="region"
-                                    value={this.state.locationResponse.region}
-                                    type="text"
-                                    name="region"
-                                    onChange={this.handleLocationChange}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="time_period">Time Period</label>
-                                <input
-                                    id="time_period"
-                                    value={this.state.locationResponse.time_period}
-                                    type="text"
-                                    name="time_period"
-                                    onChange={this.handleLocationChange}
-                                />
-                            </div> */}
-                            <div>
-                                <label htmlFor="estimated_mass">Estimated Mass:</label>
-                                <input
-                                    value={this.state.dinosaur.estimated_mass}
-                                    type="text"
-                                    name="estimated_mass"
-                                    onChange={this.handleChange}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="image">Image Link: </label>
-                                <input
-                                    value={this.state.dinosaur.image}
-                                    type="text"
-                                    name="image"
-                                    onChange={this.handleChange}
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="fossil">Fossil Link: </label>
-                                <input
-                                    value={this.state.dinosaur.fossil}
-                                    type="text"
-                                    name="fossil"
-                                    onChange={this.handleChange}
-                                />
-                            </div>
-                        <ButtonWrapper>
-                            <div>
-                                <button type="submit" onClick={this.updateDinosaur}>Modify Dino</button>
-                            </div>
-
-                            <div>
-                                <button onClick={this.deleteDinosaur}>Make Extinct</button>
-                            </div>
-                        </ButtonWrapper>
-                        </form>
-                        :
-                        null
+                                    <div>
+                                        <label htmlFor="diet">Diet</label>
+                                        <select id="diet" name="diet" onChange={this.handleDietChange}>
+                                            {
+                                                this.state.dietOptions.map(diet => {
+                                                    return (
+                                                        <option key={diet.id} value={diet.id}>{diet.diet}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="location">Location</label>
+                                        <select id="location" name="location" onChange={this.handleLocationChange}>
+                                            {
+                                                this.state.locationOptions.map(location => {
+                                                    return (
+                                                        <option key={location.id} value={location.id}>{`${location.region} - ${location.time_period}`}</option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="estimated_mass">Estimated Mass:</label>
+                                        <input
+                                            value={this.state.dinosaur.estimated_mass}
+                                            type="text"
+                                            name="estimated_mass"
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="image">Image Link: </label>
+                                        <input
+                                            value={this.state.dinosaur.image}
+                                            type="text"
+                                            name="image"
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="fossil">Fossil Link: </label>
+                                        <input
+                                            value={this.state.dinosaur.fossil}
+                                            type="text"
+                                            name="fossil"
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div>
+                                        <button type="submit" onClick={this.updateDinosaur}>Modify Dino</button>
+                                    </div>
+                                    <div>
+                                        <button onClick={this.deleteDinosaur}>Make Extinct</button>
+                                    </div>
+                                </form>
+                                :
+                                null
                         }
                     </div>
                 </FormDinosaur>
-
             </div>
         )
     }
