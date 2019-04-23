@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
 
-import Spotify from 'spotify-web-api-js';
-
-const spotifyWebApi = new Spotify(); 
+import SpotifyWebApi from 'spotify-web-api-js';
+const spotifyWebApi = new SpotifyWebApi();
 
 class DinoSoundz extends Component {
-    constructor(){
-        super();
-        const params = this.getHashParams();
-        this.state ={
-            loggedIn: params.access_token ? true : false,
-            nowPlaying: {
-                name: 'Not Checked',
-                image: ''
-            }
+        constructor(){
+          super();
+          const params = this.getHashParams();
+          const token = params.access_token;
+          
+          this.state = {
+            loggedIn: token ? true : false,
+            nowPlaying: { name: 'Not Checked', albumArt: '' }
+          }
         }
-        if (params.access_token){
-            spotifyWebApi.setAccessToken(params.access_token)
-        }
-      }
+      if (token) {
+            spotifyWebApi.setAccessToken(token);
+          }
+
       getHashParams() {
         var hashParams = {};
         var e, r = /([^&;=]+)=?([^&;]*)/g,
@@ -29,31 +28,36 @@ class DinoSoundz extends Component {
            e = r.exec(q);
         }
         return hashParams;
-      } 
+      }
+    
       getNowPlaying(){
-        spotifyWebApi.getMyCurrentPlayPlaybackState()
-            .then((response) => {
-                this.setState({
-                    nowPlaying: {
-                        name: response.item.name,
-                        image: response.item.album.images[0].url 
-                    }
-                })
-            })
+        spotifyWebApi.getMyCurrentPlaybackState()
+          .then((response) => {
+            this.setState({
+              nowPlaying: { 
+                  name: response.item.name, 
+                  albumArt: response.item.album.images[0].url
+                }
+            });
+          })
       }
     render() {
         return (
             <div>
-                <a href="http://localhost:8888">
+                <a href="http://localhost:8888/">
                 <button>Login with Spotify</button>
                 </a>
-                <div>Now Playing: { this.state.nowPlaying.name }</div>
+                    <div>
+                        Now Playing: { this.state.nowPlaying.name }
+                    </div>
                 <div>
-                    <img src={ this.state.nowPlaying.image} style={{ width: 100}}/>
+                    <img src={this.state.nowPlaying.albumArt}/>
                 </div>
+                { this.state.loggedIn && 
                 <button onClick={() => this.getNowPlaying()}>
                     Check Now Playing
                 </button>
+                }
             </div>
         );
     }
