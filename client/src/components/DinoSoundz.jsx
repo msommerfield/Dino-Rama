@@ -44,7 +44,7 @@ class DinoSoundz extends Component {
     render() {
         return (
             <div>
-                <a href="http://localhost:8888/">
+                <a href="https://localhost:8888/">
                 <button>Login with Spotify</button>
                 </a>
                     <div>
