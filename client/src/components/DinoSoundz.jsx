@@ -1,66 +1,56 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
+import axios from 'axios'
+import styled from 'styled-components'
+const SPACE_KEY = process.env.REACT_APP_KEY
 
-import SpotifyWebApi from 'spotify-web-api-js';
-const spotifyWebApi = new SpotifyWebApi();
 
-class DinoSoundz extends Component {
-        constructor(){
-          super();
-          const params = this.getHashParams();
-          const token = params.access_token;
-          
-          this.state = {
-            loggedIn: token ? true : false,
-            nowPlaying: { name: 'Not Checked', albumArt: '' }
-          }
-        }
-      if (token) {
-            spotifyWebApi.setAccessToken(token);
-          }
-
-      getHashParams() {
-        var hashParams = {};
-        var e, r = /([^&;=]+)=?([^&;]*)/g,
-            q = window.location.hash.substring(1);
-        e = r.exec(q)
-        while (e) {
-           hashParams[e[1]] = decodeURIComponent(e[2]);
-           e = r.exec(q);
-        }
-        return hashParams;
-      }
-    
-      getNowPlaying(){
-        spotifyWebApi.getMyCurrentPlaybackState()
-          .then((response) => {
-            this.setState({
-              nowPlaying: { 
-                  name: response.item.name, 
-                  albumArt: response.item.album.images[0].url
-                }
-            });
-          })
-      }
-    render() {
-        return (
-            <div>
-                <a href="https://localhost:8888/">
-                <button>Login with Spotify</button>
-                </a>
-                    <div>
-                        Now Playing: { this.state.nowPlaying.name }
-                    </div>
-                <div>
-                    <img src={this.state.nowPlaying.albumArt}/>
-                </div>
-                { this.state.loggedIn && 
-                <button onClick={() => this.getNowPlaying()}>
-                    Check Now Playing
-                </button>
-                }
-            </div>
-        );
-    }
+const Wrapper = styled.div`
+img {
+    height: 300px;
+    width:300px;
+    border-radius: 50%;
 }
+    `
 
-export default DinoSoundz;
+export default class DinoSoundz extends Component {
+
+    state = {
+        spaceData: {},
+        showImage: false,
+    }
+
+    componentDidMount() {
+        this.getSpace()
+    }
+
+    getSpace = () => {
+        axios.get(`https://api.nasa.gov/planetary/apod?api_key=${SPACE_KEY}`).then(res => {
+            this.setState({spaceData: res.data})
+        })
+    }
+
+    toggleImage = () => {
+        this.setState((state, props) => {
+            return ({showImage: !state.showImage})
+        })
+
+    }
+  render() {
+    return (
+      <Wrapper>
+          {
+              this.state.showImage ?
+              <button onClick={() => this.toggleImage()}>Tooo scary....HIDE!</button>
+              :
+              <button onClick={() => this.toggleImage()}>How Did Dinosaurs Die?</button>
+
+          }
+        {
+            this.state.showImage ?
+            <img src={this.state.spaceData.hdurl} alt={this.state.spaceData.title}/>
+            : null
+        }
+      </Wrapper>
+    )
+  }
+}
